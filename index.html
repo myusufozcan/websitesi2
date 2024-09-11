@@ -107,6 +107,9 @@
     }
   </style>
   <title>Yusuf Özcan'ın Blog Sayfası</title>
+
+  <!-- reCAPTCHA Enterprise JS -->
+  <script src="https://www.google.com/recaptcha/enterprise.js?render=6Ldhrz4qAAAAAAAeRngJGIF_kMFzUCyjifZLUfUq"></script>
 </head>
 <body>
   <nav class="navbar navbar-expand-lg navbar-dark bg-danger">
@@ -155,7 +158,6 @@
     <h1>Yusuf Özcan'ın Blog Sayfasına Hoş Geldiniz</h1>
   </header>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <main>
     <p>Hoş geldiniz! Bloglarım hakkında bilgi almak için menüden blog başlıklarına tıklayabilirsiniz.</p>
     <form id="registrationForm">
@@ -189,26 +191,27 @@
         <input type="text" class="form-control" id="city" placeholder="Şehir bilgisi girin (isteğe bağlı)">
       </div>
       <div class="mb-3">
-        <label for="captcha" class="form-label">Captcha</label>
         <div class="g-recaptcha" data-sitekey="YOUR_SITE_KEY"></div>
         <div class="error" id="captchaError"></div>
       </div>
       <button type="submit" class="btn btn-primary">Üye Ol</button>
     </form>
   </main>
+
   <footer class="bg-danger p-5 text-white text-center">
     <a href="https://www.instagram.com" target="_blank" class="text-white"><i class="fab fa-instagram"></i></a>
     <a href="https://www.youtube.com" target="_blank" class="text-white"><i class="fab fa-youtube"></i></a>
     <a href="https://www.linkedin.com" target="_blank" class="text-white"><i class="fab fa-linkedin"></i></a>
-    <a href="https://github.com" target="_blank" class="text-white"><i class="fab fa-github"></i></a>
+    <div class="footer-icons">
+      <a href="https://www.instagram.com" target="_blank" class="text-white"><i class="fab fa-instagram"></i></a>
+      <a href="https://www.youtube.com" target="_blank" class="text-white"><i class="fab fa-youtube"></i></a>
+      <a href="https://www.linkedin.com" target="_blank" class="text-white"><i class="fab fa-linkedin"></i></a>
+    </div>
+    <p>&copy; 2024 Yusuf Özcan</p>
   </footer>
-  
-  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"
-    integrity="sha384-oBqDVmMz4fnFO9Z69JKmgW6Q5bth5JHISlQ5U06I3tD3UJ8sE4dUe72JAXuM6gL1" crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"
-    integrity="sha384-tnb4PTFffzL5fP4WBw9PE+kPKSgU02MmzVGA3f5LzO5i0zW5N4L0rAVuFokm1JvH" crossorigin="anonymous"></script>
 
-  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-mQ93t9i/FtPZB1z7V1H+vTrj7KwWGMN5GvQz8iZG5JcydQe5wVEdKv67PjBEBPpl" crossorigin="anonymous"></script>
   <script>
     document.getElementById('searchInput').addEventListener('input', function() {
       const query = this.value.toLowerCase();
@@ -258,51 +261,55 @@
       const password = document.getElementById('password').value;
       const confirmPassword = document.getElementById('confirmPassword').value;
       const city = document.getElementById('city').value.trim();
-      
+
       // reCAPTCHA doğrulama
-      const recaptchaResponse = grecaptcha.getResponse();
-      
-      let hasError = false;
+      grecaptcha.enterprise.ready(async () => {
+        try {
+          const token = await grecaptcha.enterprise.execute('6Ldhrz4qAAAAAAAeRngJGIF_kMFzUCyjifZLUfUq', { action: 'LOGIN' });
 
-      // Hata kontrolleri
-      if (name === '') {
-        document.getElementById('nameError').innerText = 'İsim boş olamaz.';
-        hasError = true;
-      }
-      if (surname === '') {
-        document.getElementById('surnameError').innerText = 'Soy isim boş olamaz.';
-        hasError = true;
-      }
-      if (email === '') {
-        document.getElementById('emailError').innerText = 'E-posta boş olamaz.';
-        hasError = true;
-      }
-      if (password === '') {
-        document.getElementById('passwordError').innerText = 'Şifre boş olamaz.';
-        hasError = true;
-      }
-      if (confirmPassword === '') {
-        document.getElementById('confirmPasswordError').innerText = 'Şifre tekrar boş olamaz.';
-        hasError = true;
-      } else if (password !== confirmPassword) {
-        document.getElementById('confirmPasswordError').innerText = 'Şifreler eşleşmiyor.';
-        hasError = true;
-      }
-      if (recaptchaResponse === '') {
-        document.getElementById('recaptchaError').innerText = 'reCAPTCHA doğrulanmalı.';
-        hasError = true;
-      }
+          // Hata kontrolleri
+          let hasError = false;
 
-      if (!hasError) {
-        // Kullanıcı bilgilerini localStorage'a kaydet
-        const users = JSON.parse(localStorage.getItem('users')) || [];
-        users.push({ name, surname, email, city });
-        localStorage.setItem('users', JSON.stringify(users));
+          if (name === '') {
+            document.getElementById('nameError').innerText = 'İsim boş olamaz.';
+            hasError = true;
+          }
+          if (surname === '') {
+            document.getElementById('surnameError').innerText = 'Soy isim boş olamaz.';
+            hasError = true;
+          }
+          if (email === '') {
+            document.getElementById('emailError').innerText = 'E-posta boş olamaz.';
+            hasError = true;
+          }
+          if (password === '') {
+            document.getElementById('passwordError').innerText = 'Şifre boş olamaz.';
+            hasError = true;
+          }
+          if (confirmPassword === '') {
+            document.getElementById('confirmPasswordError').innerText = 'Şifre tekrar boş olamaz.';
+            hasError = true;
+          } else if (password !== confirmPassword) {
+            document.getElementById('confirmPasswordError').innerText = 'Şifreler eşleşmiyor.';
+            hasError = true;
+          }
 
-        // Formu sıfırla
-        document.getElementById('registrationForm').reset();
-        alert('Kayıt başarılı!');
-      }
+          if (hasError) {
+            return;
+          }
+
+          // Kullanıcı bilgilerini localStorage'a kaydet
+          const users = JSON.parse(localStorage.getItem('users')) || [];
+          users.push({ name, surname, email, city });
+          localStorage.setItem('users', JSON.stringify(users));
+
+          // Formu sıfırla
+          document.getElementById('registrationForm').reset();
+          alert('Kayıt başarılı!');
+        } catch (error) {
+          document.getElementById('recaptchaError').innerText = 'reCAPTCHA doğrulama hatası.';
+        }
+      });
     });
   </script>
 </body>
